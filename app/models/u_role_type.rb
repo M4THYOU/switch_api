@@ -1,0 +1,2 @@
+class URoleType < ApplicationRecord
+end

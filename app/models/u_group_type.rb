@@ -1,0 +1,2 @@
+class UGroupType < ApplicationRecord
+end
