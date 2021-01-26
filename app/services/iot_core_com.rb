@@ -36,8 +36,40 @@ class IotCoreCom
         if result.blank?
             {:error => 'no response found.'}
         else
+            puts result
             state = JSON.parse result
             state["state"]["delta"]
+        end
+    end
+
+    def set_state(is_on)
+        document = { :state => { :desired => { :on => is_on } } }
+        signature = @signer.sign_request(
+            http_method: 'POST',
+            url: @base_uri,
+            body: document.to_json
+        )
+        uri = URI(@base_uri)
+        result = ''
+        Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
+            request = Net::HTTP::Post.new uri
+            request.body = document.to_json
+
+            request['Host'] = signature.headers['host']
+            request['X-Amz-Date'] = signature.headers['x-amz-date']
+            request['X-Amz-Security-Token'] = signature.headers['x-amz-security-token']
+            request['X-Amz-Content-Sha256']= signature.headers['x-amz-content-sha256']
+            request['Authorization'] = signature.headers['authorization']
+            request['Content-Type'] = 'application/json'
+            response = http.request request
+            result = response.body
+        end
+        puts result
+        if result.blank?
+            {:error => 'no response found.'}
+        else
+            state = JSON.parse result
+            state["state"]["desired"]
         end
     end
 

@@ -17,9 +17,13 @@ class Api::V1::ThingController < ApplicationController
     #
     # a2eis0wug3zm6u-ats.iot.us-east-2.amazonaws.com # use this one for device itself I think
     def update
-        puts "fuck"
-
-        render json: things, status: 200
+        thing_name = params[:id]
+        is_on = params[:on].to_i
+        com = IotCoreCom.new thing_name
+        result = com.set_state is_on
+        puts result
+        result_hash = result.as_json
+        render json: result_hash, status: 200
     end
 
     private
