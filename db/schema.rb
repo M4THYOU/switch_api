@@ -10,28 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_31_173537) do
-
-  create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name"
-    t.boolean "is_active", default: true, null: false
-    t.datetime "created_on", default: -> { "CURRENT_TIMESTAMP" }, null: false
-    t.integer "created_by_uid", null: false
-    t.bigint "u_group_id", null: false
-    t.index ["u_group_id"], name: "index_clusters_on_u_group_id"
-  end
+ActiveRecord::Schema.define(version: 2021_01_31_184506) do
 
   create_table "jwt_denylists", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "jti", null: false
     t.datetime "exp"
     t.index ["jti"], name: "index_jwt_denylists_on_jti"
-  end
-
-  create_table "thing_clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "thing_id", null: false
-    t.bigint "cluster_id", null: false
-    t.index ["cluster_id"], name: "index_thing_clusters_on_cluster_id"
-    t.index ["thing_id"], name: "index_thing_clusters_on_thing_id"
   end
 
   create_table "things", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -91,9 +75,6 @@ ActiveRecord::Schema.define(version: 2021_01_31_173537) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "clusters", "u_groups"
-  add_foreign_key "thing_clusters", "clusters"
-  add_foreign_key "thing_clusters", "things"
   add_foreign_key "u_groups", "u_group_types"
   add_foreign_key "u_roles", "u_groups"
   add_foreign_key "u_roles", "u_role_types"
