@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_31_154808) do
+ActiveRecord::Schema.define(version: 2021_01_31_173537) do
 
   create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
@@ -77,7 +77,6 @@ ActiveRecord::Schema.define(version: 2021_01_31_154808) do
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "first_name", null: false
     t.string "last_name", null: false
-    t.string "password_digest", null: false
     t.string "confirm_token"
     t.boolean "is_invited", default: false, null: false
     t.boolean "is_active", default: false, null: false
