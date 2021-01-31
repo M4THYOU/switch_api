@@ -1,4 +1,5 @@
 class Api::V1::ThingController < ApplicationController
+    before_action :authenticate_user!
     def index
         Thing.all
     end
