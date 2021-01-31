@@ -3,6 +3,7 @@ class RegistrationsController < Devise::RegistrationsController
     respond_to :json
 
     def sign_up(resource_name, resource)
+        ConfirmMailer.confirm_email resource.email
         # need to send an email.
         # sign_in(resource_name, resource)
     end

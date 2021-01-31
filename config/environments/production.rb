@@ -2,6 +2,9 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  #
+  # See https://stackoverflow.com/questions/8186584/how-do-i-set-up-email-confirmation-with-devise
+  # for info on how to configure the mailer for prod.
 
   # Code is not reloaded between requests.
   config.cache_classes = true
