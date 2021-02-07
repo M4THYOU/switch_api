@@ -18,6 +18,19 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
     allow do
         origins 'localhost:4000'
-        resource '*', headers: :any, methods: [:get, :post, :patch, :put]
+        resource '/api/*', headers: :any, methods: [:get, :post, :patch, :put]
+        resource '/login',
+                 headers: :any,
+                 methods: [:post],
+                 expose: ['Authorization']
+        resource '/signup',
+                 headers: :any,
+                 methods: [:post]
+        resource '/ping-auth',
+                 headers: :any,
+                 methods: [:get]
+        resource '/ping',
+                 headers: :any,
+                 methods: [:get]
     end
 end
