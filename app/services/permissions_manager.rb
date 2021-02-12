@@ -23,7 +23,7 @@ module PermissionsManager
             g_shared_cluster = create_group(GroupType::CLUSTER, user)
             g_personal_cluster = create_group(GroupType::CLUSTER, user)
 
-            Family.create(family_group_id: g_family.id, created_by_uid: user.id)
+            family = Family.create(family_group_id: g_family.id, created_by_uid: user.id)
             Cluster.create(name: 'Shared Cluster',
                            is_shared: 1,
                            cluster_group_id: g_shared_cluster.id,
@@ -35,6 +35,7 @@ module PermissionsManager
             create_role(RoleType::PRIMARY_FAMILY, user, g_family)
             create_role(RoleType::PRIMARY_CLUSTER, user, g_shared_cluster)
             create_role(RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
+            family
         end
 
         private
