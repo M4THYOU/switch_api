@@ -10,23 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_12_142534) do
+ActiveRecord::Schema.define(version: 2021_02_12_171510) do
 
   create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name"
+    t.string "name", default: "My Cluster"
     t.bigint "cluster_group_id", null: false
     t.bigint "family_group_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "is_shared", default: 0
+    t.integer "created_by_uid", null: false
     t.index ["cluster_group_id"], name: "index_clusters_on_cluster_group_id"
     t.index ["family_group_id"], name: "index_clusters_on_family_group_id"
   end
 
   create_table "families", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "name"
+    t.string "name", default: "My Family"
     t.bigint "family_group_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "created_by_uid", null: false
     t.index ["family_group_id"], name: "index_families_on_family_group_id"
   end
 
@@ -65,7 +68,7 @@ ActiveRecord::Schema.define(version: 2021_02_12_142534) do
   create_table "u_roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "u_role_type_id", null: false
     t.bigint "u_group_id", null: false
-    t.integer "uid", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_on", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.integer "created_by_uid", null: false
     t.datetime "expires_on"
@@ -74,6 +77,7 @@ ActiveRecord::Schema.define(version: 2021_02_12_142534) do
     t.integer "revoked_by_uid"
     t.index ["u_group_id"], name: "index_u_roles_on_u_group_id"
     t.index ["u_role_type_id"], name: "index_u_roles_on_u_role_type_id"
+    t.index ["user_id"], name: "index_u_roles_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -100,4 +104,5 @@ ActiveRecord::Schema.define(version: 2021_02_12_142534) do
   add_foreign_key "u_groups", "u_group_types"
   add_foreign_key "u_roles", "u_groups"
   add_foreign_key "u_roles", "u_role_types"
+  add_foreign_key "u_roles", "users"
 end
