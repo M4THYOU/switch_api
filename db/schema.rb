@@ -10,7 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_07_152300) do
+ActiveRecord::Schema.define(version: 2021_02_12_142534) do
+
+  create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.bigint "cluster_group_id", null: false
+    t.bigint "family_group_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["cluster_group_id"], name: "index_clusters_on_cluster_group_id"
+    t.index ["family_group_id"], name: "index_clusters_on_family_group_id"
+  end
+
+  create_table "families", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.bigint "family_group_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["family_group_id"], name: "index_families_on_family_group_id"
+  end
 
   create_table "jwt_denylists", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "jti", null: false
@@ -76,6 +94,9 @@ ActiveRecord::Schema.define(version: 2021_02_07_152300) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "clusters", "u_groups", column: "cluster_group_id"
+  add_foreign_key "clusters", "u_groups", column: "family_group_id"
+  add_foreign_key "families", "u_groups", column: "family_group_id"
   add_foreign_key "u_groups", "u_group_types"
   add_foreign_key "u_roles", "u_groups"
   add_foreign_key "u_roles", "u_role_types"
