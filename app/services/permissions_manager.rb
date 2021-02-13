@@ -12,6 +12,7 @@ module PermissionsManager
         THING = 3
         PRIMARY_CLUSTER = 4
         SECONDARY_CLUSTER = 5  # not yet implemented
+        ANY = 6  # not actually assigned. It just means any role should be valid.
     end
 
     class << self
@@ -36,6 +37,9 @@ module PermissionsManager
             create_role(RoleType::PRIMARY_CLUSTER, user, g_shared_cluster)
             create_role(RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
             family
+        end
+        def get_families(user)
+            Family.joins(family_group: :u_roles).where('u_roles.user_id' => user.id, 'u_roles.u_role_type_id' => [RoleType::PRIMARY_FAMILY, RoleType::SECONDARY_FAMILY])
         end
 
         private
