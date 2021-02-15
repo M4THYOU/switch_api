@@ -4,6 +4,7 @@ module PermissionsManager
     module GroupType
         FAMILY = 1
         CLUSTER = 2
+        ADMIN = 3
     end
     # Enum mapping role type to its ID in the db
     module RoleType
@@ -13,9 +14,14 @@ module PermissionsManager
         PRIMARY_CLUSTER = 4
         SECONDARY_CLUSTER = 5  # not yet implemented
         ANY = 6  # not actually assigned. It just means any role should be valid.
+        ADMIN = 7
     end
 
     class << self
+        # Family methods
+        def get_families(user)
+            Family.joins(family_group: :u_roles).where('u_roles.user_id' => user.id, 'u_roles.u_role_type_id' => [RoleType::PRIMARY_FAMILY, RoleType::SECONDARY_FAMILY])
+        end
         def create_family(user)
             roles = user.u_roles.where(u_role_type_id: RoleType::PRIMARY_FAMILY)
             raise Exceptions::NoPermissionError unless roles.length == 0
@@ -38,8 +44,27 @@ module PermissionsManager
             create_role(RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
             family
         end
-        def get_families(user)
-            Family.joins(family_group: :u_roles).where('u_roles.user_id' => user.id, 'u_roles.u_role_type_id' => [RoleType::PRIMARY_FAMILY, RoleType::SECONDARY_FAMILY])
+
+        # Cluster methods
+        def get_family_clusters(user, family_group_id)
+            puts family_group_id
+            Cluster.joins(:family_group).joins(cluster_group: :u_roles).where(
+                'u_roles.user_id' => user.id,
+                'family_group.id' => family_group_id,
+                'u_roles.u_role_type_id' => [RoleType::PRIMARY_CLUSTER, RoleType::SECONDARY_CLUSTER])
+        end
+
+        # admin only
+        # params consists of (:name, :password, :meta) all strings
+        def create_thing(user, params)
+            raise Exceptions::NoPermissionError unless is_admin(user)
+            thing_h = {
+                'aws_name' => params[:name],
+                'name' => params[:name],
+                'password' => params[:password],
+                'password_confirmation' => params[:password],
+                'meta' => params[:meta] }
+            Thing.create!(thing_h)
         end
 
         private
@@ -52,6 +77,15 @@ module PermissionsManager
         def create_role(role_id, user, group)
             uid = user.id
             group.u_roles.create(u_role_type_id: role_id, user_id: uid, created_by_uid: uid)
+        end
+
+        def is_admin(user)
+            roles = URole.joins(:u_group).where(
+                'u_roles.user_id' => user.id,
+                'u_groups.u_group_type_id' => GroupType::ADMIN,
+                'u_role_type_id' => RoleType::ADMIN)
+            puts roles.length
+            roles.length == 1
         end
 
     end

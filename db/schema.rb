@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_12_171510) do
+ActiveRecord::Schema.define(version: 2021_02_15_151045) do
 
   create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", default: "My Cluster"
@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 2021_02_12_171510) do
     t.string "name", null: false
     t.string "password_digest", null: false
     t.text "meta", null: false
+    t.integer "is_active", default: 0
     t.index ["aws_name"], name: "index_things_on_aws_name", unique: true
   end
 

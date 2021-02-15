@@ -14,6 +14,17 @@ class Api::V1::ThingController < ApplicationController
         render json: thing_hash, status: 200
     end
 
+    def create
+        # this create is only to be accessed by the production line script!
+        begin
+            thing = PermissionsManager.create_thing(current_user, create_params)
+        rescue Exceptions::NoPermissionError
+            render json: {}, status: 403
+            return
+        end
+        render json: { 'thing': thing }, status: 200
+    end
+
     # https://a2eis0wug3zm6u.iot.us-east-2.amazonaws.com/things/esp8266/shadow
     #
     # a2eis0wug3zm6u-ats.iot.us-east-2.amazonaws.com # use this one for device itself I think
@@ -29,7 +40,8 @@ class Api::V1::ThingController < ApplicationController
 
     private
 
-    def update_params
+    def create_params
+        params.permit(:name, :password, :meta)
     end
 
 end
