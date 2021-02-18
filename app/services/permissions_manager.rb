@@ -44,14 +44,20 @@ module PermissionsManager
             create_role(RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
             family
         end
-
-        # Cluster methods
         def get_family_clusters(user, family_group_id)
-            puts family_group_id
             Cluster.joins(:family_group).joins(cluster_group: :u_roles).where(
                 'u_roles.user_id' => user.id,
                 'family_group.id' => family_group_id,
                 'u_roles.u_role_type_id' => [RoleType::PRIMARY_CLUSTER, RoleType::SECONDARY_CLUSTER])
+        end
+
+        # Cluster methods
+        def get_clusters(user)
+            Cluster.joins(cluster_group: :u_roles).where('u_roles.user_id' => user.id, 'u_roles.u_role_type_id' => [RoleType::PRIMARY_CLUSTER]) # no sec_cluster role for now.
+        end
+        def get_cluster_things(user, cluster_group_id)
+            # need to make sure user has the primary role in this cluster.
+            Thing.joins
         end
 
         # admin only
@@ -84,7 +90,6 @@ module PermissionsManager
                 'u_roles.user_id' => user.id,
                 'u_groups.u_group_type_id' => GroupType::ADMIN,
                 'u_role_type_id' => RoleType::ADMIN)
-            puts roles.length
             roles.length == 1
         end
 

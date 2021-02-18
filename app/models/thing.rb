@@ -1,4 +1,4 @@
 class Thing < ApplicationRecord
-  has_and_belongs_to_many :clusters
+  belongs_to :cluster
   has_secure_password
 end
