@@ -46,7 +46,7 @@ module PermissionsManager
             # need to make sure user has the primary role in this cluster.
             roles = user.u_roles.where(u_role_type_id: DbEnums::RoleType::PRIMARY_CLUSTER, u_group_id: cluster_group_id)
             raise Exceptions::NoPermissionError if roles.length == 0
-            Thing.joins(:u_roles).where(
+            Thing.select(:id, :aws_name, :name, :meta, :is_active, :thing_type_id).joins(:u_roles).where(
                 'u_roles.u_role_type_id' => [DbEnums::RoleType::THING],
                 'u_roles.u_group_id' => cluster_group_id)
         end
@@ -76,6 +76,10 @@ module PermissionsManager
 
             thing
         end
+        def get_things(user)
+            group_ids = user.u_roles.where(u_role_type_id: DbEnums::RoleType::PRIMARY_CLUSTER).pluck(:u_group_id)
+            Thing.select(:id, :aws_name, :name, :meta, :is_active, :thing_type_id).joins(u_roles: :u_group).where('u_groups.id' => group_ids)
+        end
 
         ### ADMIN ONLY ###
         # params consists of (:name, :password, :meta) all strings
@@ -89,9 +93,6 @@ module PermissionsManager
                 'meta' => params[:meta],
                 'thing_type_id' => params[:thing_type_id]
             }
-            puts 'aaaa'
-            puts params[:thing_type_id]
-            puts 'bbbb'
             Thing.create!(thing_h)
         end
 

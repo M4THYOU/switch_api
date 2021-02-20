@@ -15,4 +15,8 @@ module DbEnums
         ANY = 6  # not actually assigned. It just means any role should be valid.
         ADMIN = 7
     end
+    # Enum mapping thing type to its ID in the db
+    module ThingType
+        SWITCH = 1
+    end
 end

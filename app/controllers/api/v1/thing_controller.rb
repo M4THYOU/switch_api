@@ -1,7 +1,8 @@
 class Api::V1::ThingController < ApplicationController
     before_action :authenticate_user!
     def index
-        Thing.all
+        things = PermissionsManager.get_things(current_user)
+        render json: { 'things': things }, status: 200
     end
 
     def show
