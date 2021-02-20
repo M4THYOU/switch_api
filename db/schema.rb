@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_20_000919) do
+ActiveRecord::Schema.define(version: 2021_02_20_180258) do
 
   create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", default: "My Cluster"
@@ -39,13 +39,20 @@ ActiveRecord::Schema.define(version: 2021_02_20_000919) do
     t.index ["jti"], name: "index_jwt_denylists_on_jti"
   end
 
+  create_table "thing_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "thing_type", null: false
+    t.text "desc"
+  end
+
   create_table "things", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "aws_name", null: false
     t.string "name", null: false
     t.string "password_digest", null: false
     t.text "meta", null: false
     t.integer "is_active", default: 0
+    t.bigint "thing_type_id", null: false
     t.index ["aws_name"], name: "index_things_on_aws_name", unique: true
+    t.index ["thing_type_id"], name: "index_things_on_thing_type_id"
   end
 
   create_table "u_group_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -104,6 +111,7 @@ ActiveRecord::Schema.define(version: 2021_02_20_000919) do
   add_foreign_key "clusters", "u_groups", column: "cluster_group_id"
   add_foreign_key "clusters", "u_groups", column: "family_group_id"
   add_foreign_key "families", "u_groups", column: "family_group_id"
+  add_foreign_key "things", "thing_types"
   add_foreign_key "u_groups", "u_group_types"
   add_foreign_key "u_roles", "things"
   add_foreign_key "u_roles", "u_groups"

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
             post '/thing/activate', to: 'thing#activate'
 
             resources :cluster, only: [:index]
+            get '/cluster/things/:cluster_group_id', to: 'cluster#things'
 
             resources :family, only: [:index, :create]
             get '/family/clusters/:family_group_id', to: 'family#clusters'

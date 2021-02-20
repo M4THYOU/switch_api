@@ -58,7 +58,7 @@ class Api::V1::ThingController < ApplicationController
     private
 
     def create_params
-        params.permit(:name, :password, :meta)
+        params.permit(:name, :password, :meta, :thing_type_id)
     end
 
     def activate_params
