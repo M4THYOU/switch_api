@@ -25,6 +25,23 @@ class Api::V1::ThingController < ApplicationController
         render json: { 'thing': thing }, status: 200
     end
 
+    # used to activate a cluster!
+    def activate
+        begin
+            thing = PermissionsManager.activate_thing(current_user, activate_params)
+        rescue Exceptions::NoPermissionError
+            render json: {}, status: 403
+            return
+        rescue Exceptions::AlreadyActivatedError
+            render json: {}, status: 400
+            return
+        rescue Exceptions::NoAuth
+            render json: {}, status: 401
+            return
+        end
+        render json: { 'thing': thing }, status: 200
+    end
+
     # https://a2eis0wug3zm6u.iot.us-east-2.amazonaws.com/things/esp8266/shadow
     #
     # a2eis0wug3zm6u-ats.iot.us-east-2.amazonaws.com # use this one for device itself I think
@@ -42,6 +59,10 @@ class Api::V1::ThingController < ApplicationController
 
     def create_params
         params.permit(:name, :password, :meta)
+    end
+
+    def activate_params
+        params.permit(:name, :key, :cluster_group_id)
     end
 
 end

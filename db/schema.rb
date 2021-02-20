@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_15_151045) do
+ActiveRecord::Schema.define(version: 2021_02_20_000919) do
 
   create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", default: "My Cluster"
@@ -69,13 +69,15 @@ ActiveRecord::Schema.define(version: 2021_02_15_151045) do
   create_table "u_roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "u_role_type_id", null: false
     t.bigint "u_group_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.datetime "created_on", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.integer "created_by_uid", null: false
     t.datetime "expires_on"
     t.boolean "is_revoked", default: false
     t.datetime "revoked_on"
     t.integer "revoked_by_uid"
+    t.bigint "thing_id"
+    t.index ["thing_id"], name: "index_u_roles_on_thing_id"
     t.index ["u_group_id"], name: "index_u_roles_on_u_group_id"
     t.index ["u_role_type_id"], name: "index_u_roles_on_u_role_type_id"
     t.index ["user_id"], name: "index_u_roles_on_user_id"
@@ -103,6 +105,7 @@ ActiveRecord::Schema.define(version: 2021_02_15_151045) do
   add_foreign_key "clusters", "u_groups", column: "family_group_id"
   add_foreign_key "families", "u_groups", column: "family_group_id"
   add_foreign_key "u_groups", "u_group_types"
+  add_foreign_key "u_roles", "things"
   add_foreign_key "u_roles", "u_groups"
   add_foreign_key "u_roles", "u_role_types"
   add_foreign_key "u_roles", "users"

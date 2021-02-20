@@ -11,15 +11,15 @@ class Api::V1::ClusterController < ApplicationController
         render json: { 'clusters': clusters }, status: 200
     end
 
-    # gets the clusters for a specific family
+    # gets the things for a specific cluster
     def things
-        begin
-            things = PermissionsManager.get_family_clusters(current_user, clusters_params[:family_group_id])
-        rescue
-            render json: {}, status: 403
-            return
-        end
-        render json: { 'clusters': clusters }, status: 200
+        # begin
+        #     things = PermissionsManager.get_family_clusters(current_user, clusters_params[:family_group_id])
+        # rescue
+        #     render json: {}, status: 403
+        #     return
+        # end
+        # render json: { 'clusters': things }, status: 200
     end
 
     def create

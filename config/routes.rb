@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     namespace :api do
 	    namespace :v1 do
 	        resources :thing, only: [:index, :show, :create, :update]
+            post '/thing/activate', to: 'thing#activate'
 
             resources :cluster, only: [:index]
 

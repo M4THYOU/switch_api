@@ -39,9 +39,9 @@ module PermissionsManager
             Cluster.create(cluster_group_id: g_personal_cluster.id,
                            family_group_id: g_family.id,
                            created_by_uid: user.id)
-            create_role(RoleType::PRIMARY_FAMILY, user, g_family)
-            create_role(RoleType::PRIMARY_CLUSTER, user, g_shared_cluster)
-            create_role(RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
+            create_user_role(RoleType::PRIMARY_FAMILY, user, g_family)
+            create_user_role(RoleType::PRIMARY_CLUSTER, user, g_shared_cluster)
+            create_user_role(RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
             family
         end
         def get_family_clusters(user, family_group_id)
@@ -58,6 +58,36 @@ module PermissionsManager
         def get_cluster_things(user, cluster_group_id)
             # need to make sure user has the primary role in this cluster.
             Thing.joins
+        end
+
+        # thing methods
+        def activate_thing(user, params)
+            name = params[:name]
+            key = params[:key]
+            cluster_group_id = params[:cluster_group_id]
+
+            # check if user has permission to add to this cluster
+            roles = user.u_roles.where(u_role_type_id: RoleType::PRIMARY_CLUSTER, u_group_id: cluster_group_id)
+            raise Exceptions::NoPermissionError if roles.length == 0
+            # check if thing is_active
+            thing = Thing.find_by(aws_name: name)
+            thing = thing.authenticate(key)
+            raise Exceptions::NoAuth unless thing
+            raise Exceptions::AlreadyActivatedError if thing.is_active != 0
+            #  check if thing already has an existing role.
+            thing_roles = URole.where(thing_id: thing.id, u_role_type_id: RoleType::THING)
+            raise Exceptions::NoPermissionError unless thing_roles.length == 0
+
+            thing.is_active = 1
+            group = UGroup.find(cluster_group_id)
+            role = create_thing_role(thing, user, group)
+            puts role.id
+            thing.save
+
+            # WHY THIS NOT WORKING!? FOREIGN_KEY OR ONE TO ONE OR SOMETHING
+            #
+
+            thing
         end
 
         # admin only
@@ -80,9 +110,17 @@ module PermissionsManager
             group.u_groups.create(created_by_uid: user.id)
         end
 
-        def create_role(role_id, user, group)
+        def create_user_role(role_id, user, group)
+            raise Exceptions::NoPermissionError if role_id == RoleType::THING
             uid = user.id
             group.u_roles.create(u_role_type_id: role_id, user_id: uid, created_by_uid: uid)
+        end
+
+        # role_id is implied.
+        def create_thing_role(thing, user, group)
+            uid = user.id
+            thing_id = thing.id
+            group.u_roles.create(u_role_type_id: RoleType::THING, thing_id: thing_id, created_by_uid: uid)
         end
 
         def is_admin(user)
