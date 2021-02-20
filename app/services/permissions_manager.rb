@@ -71,18 +71,18 @@ module PermissionsManager
             raise Exceptions::NoPermissionError if roles.length == 0
             # check if thing is_active
             thing = Thing.find_by(aws_name: name)
-            thing = thing.authenticate(key)
-            raise Exceptions::NoAuth unless thing
+            thing_auth = thing.authenticate(key)
+            raise Exceptions::NoAuth unless thing_auth
             raise Exceptions::AlreadyActivatedError if thing.is_active != 0
             #  check if thing already has an existing role.
             thing_roles = URole.where(thing_id: thing.id, u_role_type_id: RoleType::THING)
             raise Exceptions::NoPermissionError unless thing_roles.length == 0
 
             thing.is_active = 1
+            thing.save!
             group = UGroup.find(cluster_group_id)
             role = create_thing_role(thing, user, group)
             puts role.id
-            thing.save
 
             # WHY THIS NOT WORKING!? FOREIGN_KEY OR ONE TO ONE OR SOMETHING
             #
