@@ -7,7 +7,7 @@ class Api::V1::ThingController < ApplicationController
 
     def show
         thing_name = params[:id]
-        com = IotCoreCom.new thing_name
+        com = IotCoreCom.new(current_user, thing_name)
         state = com.get_state
         thing = Thing.find_by aws_name: thing_name
         thing_hash = thing.as_json
@@ -49,9 +49,8 @@ class Api::V1::ThingController < ApplicationController
     def update
         thing_name = params[:id]
         is_on = params[:on].to_i
-        com = IotCoreCom.new thing_name
+        com = IotCoreCom.new(current_user, thing_name)
         result = com.set_state is_on
-        puts result
         result_hash = result.as_json
         render json: result_hash, status: 200
     end

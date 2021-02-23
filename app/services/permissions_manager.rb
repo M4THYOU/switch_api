@@ -80,6 +80,13 @@ module PermissionsManager
             group_ids = user.u_roles.where(u_role_type_id: DbEnums::RoleType::PRIMARY_CLUSTER).pluck(:u_group_id)
             Thing.select(:id, :aws_name, :name, :meta, :is_active, :thing_type_id).joins(u_roles: :u_group).where('u_groups.id' => group_ids)
         end
+        def has_thing_permission(user, aws_name)
+            thing = Thing.find_by(aws_name: aws_name)
+            role = thing.u_roles.first
+            raise Exceptions::NoPermissionError unless role.u_role_type_id == DbEnums::RoleType::THING
+            roles = user.u_roles.where(u_role_type_id: DbEnums::RoleType::PRIMARY_CLUSTER, u_group_id: role.u_group_id)
+            raise Exceptions::NoPermissionError if roles.length == 0
+        end
 
         ### ADMIN ONLY ###
         # params consists of (:name, :password, :meta) all strings

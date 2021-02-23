@@ -1,6 +1,7 @@
 class IotCoreCom
 
-    def initialize(thing_name)
+    def initialize(current_user, thing_name)
+        PermissionsManager.has_thing_permission(current_user, thing_name)
         @thing_name = thing_name
         @signer = Aws::Sigv4::Signer.new(
             service: 'iotdata',
@@ -23,20 +24,13 @@ class IotCoreCom
         Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
             request = Net::HTTP::Get.new uri
             request.body = {}.to_json
-
-            request['Host'] = signature.headers['host']
-            request['X-Amz-Date'] = signature.headers['x-amz-date']
-            request['X-Amz-Security-Token'] = signature.headers['x-amz-security-token']
-            request['X-Amz-Content-Sha256']= signature.headers['x-amz-content-sha256']
-            request['Authorization'] = signature.headers['authorization']
-            request['Content-Type'] = 'application/json'
+            request = set_headers(request, signature)
             response = http.request request
             result = response.body
         end
         if result.blank?
             {:error => 'no response found.'}
         else
-            puts result
             state = JSON.parse result
             state["state"]["delta"]
         end
@@ -54,23 +48,28 @@ class IotCoreCom
         Net::HTTP.start(uri.host, uri.port, :use_ssl => true) do |http|
             request = Net::HTTP::Post.new uri
             request.body = document.to_json
-
-            request['Host'] = signature.headers['host']
-            request['X-Amz-Date'] = signature.headers['x-amz-date']
-            request['X-Amz-Security-Token'] = signature.headers['x-amz-security-token']
-            request['X-Amz-Content-Sha256']= signature.headers['x-amz-content-sha256']
-            request['Authorization'] = signature.headers['authorization']
-            request['Content-Type'] = 'application/json'
+            request = set_headers(request, signature)
             response = http.request request
             result = response.body
         end
-        puts result
         if result.blank?
             {:error => 'no response found.'}
         else
             state = JSON.parse result
             state["state"]["desired"]
         end
+    end
+
+    private
+
+    def set_headers(request, signature)
+        request['Host'] = signature.headers['host']
+        request['X-Amz-Date'] = signature.headers['x-amz-date']
+        request['X-Amz-Security-Token'] = signature.headers['x-amz-security-token']
+        request['X-Amz-Content-Sha256']= signature.headers['x-amz-content-sha256']
+        request['Authorization'] = signature.headers['authorization']
+        request['Content-Type'] = 'application/json'
+        request
     end
 
 end
