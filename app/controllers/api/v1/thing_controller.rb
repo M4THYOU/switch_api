@@ -18,7 +18,10 @@ class Api::V1::ThingController < ApplicationController
     def create
         # this create is only to be accessed by the production line script!
         begin
-            thing = PermissionsManager.create_thing(current_user, create_params)
+            name_len = rand(24) + 6  # 6 <= name_len < 24
+            h = create_params
+            h[:name] = SecureRandom.urlsafe_base64 name_len
+            thing = PermissionsManager.create_thing(current_user, h)
         rescue Exceptions::NoPermissionError
             render json: {}, status: 403
             return
@@ -58,7 +61,7 @@ class Api::V1::ThingController < ApplicationController
     private
 
     def create_params
-        params.permit(:name, :password, :meta, :thing_type_id)
+        params.permit(:password, :meta, :thing_type_id)
     end
 
     def activate_params
