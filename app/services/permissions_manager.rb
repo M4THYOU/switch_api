@@ -102,6 +102,11 @@ module PermissionsManager
             }
             Thing.create!(thing_h)
         end
+        def delete_thing(user, thing_id)
+            raise Exceptions::NoPermissionError unless is_admin(user)
+            thing = Thing.find(thing_id)
+            thing.destroy!
+        end
 
         private
 

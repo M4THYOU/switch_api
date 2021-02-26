@@ -58,6 +58,17 @@ class Api::V1::ThingController < ApplicationController
         render json: result_hash, status: 200
     end
 
+    def destroy
+        # this create is only to be accessed by the production line script!
+        begin
+            PermissionsManager.delete_thing(current_user, params[:id])
+        rescue Exceptions::NoPermissionError
+            render json: {}, status: 403
+            return
+        end
+        render json: { 'success': true }, status: 200
+    end
+
     private
 
     def create_params
