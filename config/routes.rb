@@ -4,11 +4,13 @@ Rails.application.routes.draw do
                path_names: {
                    sign_in: 'login',
                    sign_out: 'logout',
-                   registration: 'signup'
+                   registration: 'signup',
+                   invitation: 'invitation'
                },
                controllers: {
                    sessions: 'sessions',
-                   registrations: 'registrations'
+                   registrations: 'registrations',
+                   invitations: 'invitations'
                }
     namespace :api do
 	    namespace :v1 do

@@ -46,5 +46,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # security
 gem 'devise'
 gem 'devise-jwt', '~> 0.8.0'
+gem 'devise_invitable', '~> 2.0', '>= 2.0.1'
 gem 'aws-sdk-signer'
 gem 'rack-cors'

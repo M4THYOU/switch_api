@@ -3,6 +3,30 @@ require 'db_enums'
 module PermissionsManager
 
     class << self
+        # invitation methods
+        def invite_to_family(inviter, invitee, family_group_id)
+            family_group = UGroup.joins(:u_roles).where(
+                'u_roles.user_id' => inviter.id,
+                'u_roles.u_group_id' => family_group_id,
+                'u_roles.u_role_type_id' => [DbEnums::RoleType::PRIMARY_FAMILY],
+                'u_groups.u_group_type_id' => [DbEnums::GroupType::FAMILY]).first
+            raise Exceptions::NoPermissionError if family_group.nil?
+            invitee_family_group = UGroup.joins(:u_roles).where(
+                'u_roles.user_id' => invitee.id,
+                'u_roles.u_group_id' => family_group_id,
+                'u_roles.u_role_type_id' => [DbEnums::RoleType::PRIMARY_FAMILY, DbEnums::RoleType::SECONDARY_FAMILY],
+                'u_groups.u_group_type_id' => [DbEnums::GroupType::FAMILY]).first
+            raise Exceptions::RoleAlreadyExistsError unless invitee_family_group.nil?
+            shared_cluster = Cluster.joins(family_group: :u_roles).where(
+                'u_groups.id' => family_group_id,
+                'clusters.is_shared' => 1).first
+            cluster_group = UGroup.find(shared_cluster.cluster_group_id)  # if shared_cluster is nil? something broke, that ain't supposed to happen.
+
+            # add them to the family & shared cluster.
+            create_user_role(DbEnums::RoleType::SECONDARY_FAMILY, invitee, family_group)
+            create_user_role(DbEnums::RoleType::PRIMARY_CLUSTER, invitee, cluster_group)
+        end
+
         # Family methods
         def get_families(user)
             Family.joins(family_group: :u_roles).where(
