@@ -26,6 +26,9 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
         resource '/signup',
                  headers: :any,
                  methods: [:post]
+        resource '/invitation',
+                 headers: :any,
+                 methods: [:post, :put]
         resource '/ping-auth',
                  headers: :any,
                  methods: [:get]
