@@ -11,6 +11,11 @@ class Api::V1::FamilyController < ApplicationController
         render json: { 'families': families }, status: 200
     end
 
+    def my_family
+        family = PermissionsManager.get_my_family(current_user)
+        render json: { 'family': family }, status: 200
+    end
+
     # gets the clusters for a specific family
     def clusters
         begin

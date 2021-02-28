@@ -22,6 +22,7 @@ Rails.application.routes.draw do
 
             resources :family, only: [:index, :create]
             get '/family/clusters/:family_group_id', to: 'family#clusters'
+            get '/family/primary/', to: 'family#my_family'
 	    end
     end
 

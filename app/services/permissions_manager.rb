@@ -55,6 +55,12 @@ module PermissionsManager
             create_user_role(DbEnums::RoleType::PRIMARY_CLUSTER, user, g_personal_cluster)
             family
         end
+        def get_my_family(user)
+            # every user has 1 family for which they have the primary role in. Grab that one.
+            Family.joins(family_group: :u_roles).where(
+                'u_roles.user_id' => user.id,
+                'u_roles.u_role_type_id' => [DbEnums::RoleType::PRIMARY_FAMILY]).first
+        end
         def get_family_clusters(user, family_group_id)
             Cluster.joins(:family_group).joins(cluster_group: :u_roles).where(
                 'u_roles.user_id' => user.id,
