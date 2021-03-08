@@ -144,6 +144,7 @@ GEM
     mimemagic (0.3.5)
     mini_mime (1.0.2)
     minitest (5.14.3)
+    mqtt (0.5.0)
     msgpack (1.3.3)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
@@ -268,6 +269,7 @@ DEPENDENCIES
   faker
   listen (~> 3.3)
   mailcatcher
+  mqtt (~> 0.5)
   mysql2 (~> 0.5)
   puma (~> 5.0)
   rack-cors

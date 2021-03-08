@@ -30,3 +30,6 @@
 
 # Ignore environment variables
 config/env.rb
+
+# Ignore MQTT broker certificates
+config/certificates

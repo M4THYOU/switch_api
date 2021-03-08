@@ -49,3 +49,6 @@ gem 'devise-jwt', '~> 0.8.0'
 gem 'devise_invitable', '~> 2.0', '>= 2.0.1'
 gem 'aws-sdk-signer'
 gem 'rack-cors'
+
+# MQTT
+gem 'mqtt', '~> 0.5'
