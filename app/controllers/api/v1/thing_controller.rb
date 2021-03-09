@@ -7,9 +7,11 @@ class Api::V1::ThingController < ApplicationController
 
     def show
         thing_name = params[:id]
-        com = IotCoreCom.new(current_user, thing_name)
-        state = com.get_state
-        thing = Thing.find_by aws_name: thing_name
+        # com = IotCoreCom.new(current_user, thing_name)
+        # state = com.get_state
+        mqtt_client = MqttBrokerWrapper.new(current_user, thing_name)
+        state = mqtt_client.get_state
+        thing = Thing.find_by(aws_name: thing_name)
         thing_hash = thing.as_json
         thing_hash[:state] = state
         render json: thing_hash, status: 200

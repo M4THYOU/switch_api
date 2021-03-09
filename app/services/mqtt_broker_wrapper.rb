@@ -8,7 +8,25 @@ class MqttBrokerWrapper
     end
 
     def get_state
-        # TODO
+        state_topic = @thing_name + '/state'
+        client.subscribe(state_topic)
+        payload = '{"state":{"error":"Timeout"}}'
+        begin
+            Timeout.timeout(5) do
+                client.get(state_topic) do |topic, raw_payload|
+                    puts topic
+                    if topic == state_topic
+                        payload = raw_payload
+                        break
+                    end
+                end
+            end
+        rescue TimeoutError
+            Rails.logger.error("Timeout getting state for: #{state_topic}")
+        end
+        client.unsubscribe(state_topic)
+        state = JSON.parse(payload)
+        state['state']
     end
 
     # is_on must be either 0 or 1.
