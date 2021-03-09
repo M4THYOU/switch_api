@@ -12,7 +12,7 @@ class MqttBrokerWrapper
         client.subscribe(state_topic)
         payload = '{"state":{"error":"Timeout"}}'
         begin
-            Timeout.timeout(5) do
+            Timeout.timeout(10) do
                 client.get(state_topic) do |topic, raw_payload|
                     puts topic
                     if topic == state_topic
