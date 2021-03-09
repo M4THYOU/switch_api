@@ -52,8 +52,10 @@ class Api::V1::ThingController < ApplicationController
     def update
         thing_name = params[:id]
         is_on = params[:on].to_i
-        com = IotCoreCom.new(current_user, thing_name)
-        result = com.set_state is_on
+        # com = IotCoreCom.new(current_user, thing_name)
+        # result = com.set_state is_on
+        mqtt_client = MqttBrokerWrapper.new(current_user, thing_name)
+        result = mqtt_client.set_state(is_on)
         result_hash = result.as_json
         render json: result_hash, status: 200
     end

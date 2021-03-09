@@ -73,6 +73,7 @@ Rails.application.configure do
       config.mqtt_service.client_id = 'server'
       config.mqtt_service.host = '192.168.2.14'
       config.mqtt_service.port = 8883
+      config.mqtt_service.keep_alive = 120
       config.mqtt_service.ssl = true
       config.mqtt_service.cert_file = Rails.root.join('config', 'certificates', 'development', 'server-cert.pem').to_s
       config.mqtt_service.key_file = Rails.root.join('config', 'certificates', 'development', 'server-key.pem').to_s
