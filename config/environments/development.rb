@@ -80,7 +80,15 @@ Rails.application.configure do
       config.mqtt_service.ca_file = Rails.root.join('config', 'certificates', 'hivemq-server-cert.pem').to_s
       config.mqtt_service.username = 'admin-user'
       config.mqtt_service.password = 'admin-password'
-      config.mqtt_service.connect
+      # config.mqtt_service.connect
+      begin
+          config.mqtt_service.connect
+      rescue Errno::ECONNREFUSED
+          # logger doesn't work at this point.
+          puts 'Connection to MQTT broker failed, retrying in 5 seconds...'
+          Kernel.sleep(5)
+          retry
+      end
   end
 
 end
