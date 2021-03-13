@@ -8,7 +8,6 @@ class MqttBrokerWrapper
     end
 
     def get_state
-        state_topic = @thing_name + '/state'
         client.subscribe(state_topic)
         payload = '{"state":{"error":"Timeout"}}'
         begin
@@ -33,11 +32,15 @@ class MqttBrokerWrapper
     def set_state(is_on)
         state = { :on => is_on }
         payload = { :state => state }
-        client.publish(@thing_name + '/state', payload.to_json, true, 1)
+        client.publish(state_topic, payload.to_json, true, 1)
         state
     end
 
     private
+
+    def state_topic
+        'thing/switch/' + @thing_name + '/state'
+    end
 
     def client
         Rails.application.config.mqtt_service
