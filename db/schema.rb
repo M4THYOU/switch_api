@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_27_171818) do
+ActiveRecord::Schema.define(version: 2021_03_13_193630) do
 
   create_table "clusters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", default: "My Cluster"
@@ -37,6 +37,13 @@ ActiveRecord::Schema.define(version: 2021_02_27_171818) do
     t.string "jti", null: false
     t.datetime "exp"
     t.index ["jti"], name: "index_jwt_denylists_on_jti"
+  end
+
+  create_table "mqtt_messages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "topic"
+    t.text "payload"
+    t.datetime "created_on", default: -> { "CURRENT_TIMESTAMP" }
+    t.index ["topic"], name: "index_mqtt_messages_on_topic"
   end
 
   create_table "thing_types", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
