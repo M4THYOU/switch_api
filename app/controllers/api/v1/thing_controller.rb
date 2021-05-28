@@ -1,3 +1,5 @@
+require 'broker/broker_wrapper'
+
 class Api::V1::ThingController < ApplicationController
     before_action :authenticate_user!
     def index
@@ -7,10 +9,9 @@ class Api::V1::ThingController < ApplicationController
 
     def show
         thing_name = params[:id]
-        # com = IotCoreCom.new(current_user, thing_name)
-        # state = com.get_state
-        mqtt_client = MqttBrokerWrapper.new(current_user, thing_name)
-        state = mqtt_client.get_state
+        client = Broker::Wrapper.new(current_user, thing_name)
+        state = client.get_state
+
         thing = Thing.find_by(aws_name: thing_name)
         thing_hash = thing.as_json
         thing_hash[:state] = state
@@ -54,10 +55,9 @@ class Api::V1::ThingController < ApplicationController
     def update
         thing_name = params[:id]
         is_on = params[:on].to_i
-        # com = IotCoreCom.new(current_user, thing_name)
-        # result = com.set_state is_on
-        mqtt_client = MqttBrokerWrapper.new(current_user, thing_name)
-        result = mqtt_client.set_state(is_on)
+        client = Broker::Wrapper.new(current_user, thing_name)
+        result = client.set_state(is_on)
+
         result_hash = result.as_json
         render json: result_hash, status: 200
     end

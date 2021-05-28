@@ -68,27 +68,27 @@ Rails.application.configure do
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
-  config.after_initialize do
-      config.mqtt_service = MQTT::Client.new
-      config.mqtt_service.client_id = 'server'
-      config.mqtt_service.host = '192.168.2.14'
-      config.mqtt_service.port = 8883
-      config.mqtt_service.keep_alive = 120
-      config.mqtt_service.ssl = true
-      config.mqtt_service.cert_file = Rails.root.join('config', 'certificates', 'development', 'server-cert.pem').to_s
-      config.mqtt_service.key_file = Rails.root.join('config', 'certificates', 'development', 'server-key.pem').to_s
-      config.mqtt_service.ca_file = Rails.root.join('config', 'certificates', 'hivemq-server-cert.pem').to_s
-      config.mqtt_service.username = 'admin-user'
-      config.mqtt_service.password = 'admin-password'
-      # config.mqtt_service.connect
-      begin
-          config.mqtt_service.connect
-      rescue Errno::ECONNREFUSED
-          # logger doesn't work at this point.
-          puts 'Connection to MQTT broker failed, retrying in 5 seconds...'
-          Kernel.sleep(5)
-          retry
-      end
-  end
+  # config.after_initialize do
+  #     config.mqtt_service = MQTT::Client.new
+  #     config.mqtt_service.client_id = 'server'
+  #     config.mqtt_service.host = '192.168.2.14'
+  #     config.mqtt_service.port = 8883
+  #     config.mqtt_service.keep_alive = 120
+  #     config.mqtt_service.ssl = true
+  #     config.mqtt_service.cert_file = Rails.root.join('config', 'certificates', 'development', 'server-cert.pem').to_s
+  #     config.mqtt_service.key_file = Rails.root.join('config', 'certificates', 'development', 'server-key.pem').to_s
+  #     config.mqtt_service.ca_file = Rails.root.join('config', 'certificates', 'hivemq-server-cert.pem').to_s
+  #     config.mqtt_service.username = 'admin-user'
+  #     config.mqtt_service.password = 'admin-password'
+  #     # config.mqtt_service.connect
+  #     begin
+  #         config.mqtt_service.connect
+  #     rescue Errno::ECONNREFUSED
+  #         # logger doesn't work at this point.
+  #         puts 'Connection to MQTT broker failed, retrying in 5 seconds...'
+  #         Kernel.sleep(5)
+  #         retry
+  #     end
+  # end
 
 end
